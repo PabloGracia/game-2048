@@ -1,5 +1,5 @@
 .scores {
   width: 400px;
-  display: flex;
-  flex-direction: column;
+  display: inline-block;
+  justify-content: space-between;
 }
