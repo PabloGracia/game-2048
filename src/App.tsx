@@ -5,9 +5,11 @@ import { Game } from "./components/game/game.component";
 
 const App: React.FC = () => {
   return (
-    <div className="App">
-      <h1>Set Game</h1>
-      <Game />
+    <div className="App-container">
+      <div className="App-content">
+        <h1>Set Game</h1>
+        <Game />
+      </div>
     </div>
   );
 };

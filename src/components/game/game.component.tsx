@@ -20,10 +20,10 @@ export class Game extends React.Component<IProps, IState> {
       score: 0,
       high_score: 0,
       values: [
-        [null, null, null, null],
-        [null, null, null, null],
-        [null, null, null, null],
-        [null, null, null, null]
+        [2, null, null, null],
+        [null, 2, null, null],
+        [null, null, 2, null],
+        [null, null, null, 2]
       ]
     };
   }
