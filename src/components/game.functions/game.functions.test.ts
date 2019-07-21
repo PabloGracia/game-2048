@@ -7,6 +7,9 @@ import { checkMatrixContent } from "./game.functions";
 import { invertRows } from "./game.functions";
 import { switchRowsColumns } from "./game.functions";
 import { moveRight } from "./game.functions";
+import { moveDown } from "./game.functions";
+import { moveLeft } from "./game.functions";
+import { moveUp } from "./game.functions";
 
 /*
 test("function_name", () => {
@@ -146,5 +149,53 @@ test("move_right_1", () => {
     [null, null, null, 2],
     [null, 16, 2, 16],
     [null, null, 4, 8]
+  ]);
+});
+
+test("move_down_1", () => {
+  expect(
+    moveDown([
+      [null, 2, 4, null],
+      [null, 2, null, null],
+      [16, 2, 8, 8],
+      [2, 2, 4, 4]
+    ])
+  ).toStrictEqual([
+    [null, null, null, null],
+    [null, null, 4, null],
+    [16, 4, 8, 8],
+    [2, 4, 4, 4]
+  ]);
+});
+
+test("move_left_1", () => {
+  expect(
+    moveLeft([
+      [null, 2, 4, null],
+      [null, 2, null, null],
+      [16, 2, 8, 8],
+      [2, 2, 4, 4]
+    ])
+  ).toStrictEqual([
+    [2, 4, null, null],
+    [2, null, null, null],
+    [16, 2, 16, null],
+    [4, 8, null, null]
+  ]);
+});
+
+test("move_up_1", () => {
+  expect(
+    moveUp([
+      [null, 2, 4, null],
+      [null, 2, null, null],
+      [16, 2, 8, 8],
+      [2, 2, 4, 4]
+    ])
+  ).toStrictEqual([
+    [16, 4, 4, 8],
+    [2, 4, 8, 4],
+    [null, null, 4, null],
+    [null, null, null, null]
   ]);
 });

@@ -123,17 +123,25 @@ export const isRowEmpty = (row: Array<number | null>): boolean => {
   return true;
 };
 
+/**
+ *
+ * @param matrix The board game
+ * @returns the matrix with all the content moved to the right. Addition is also performed.
+ */
 export const moveRight = (matrix: TMatrix): TMatrix | null => {
-  // The iteration will be from beginning to end, so the rows need to be inverted
-  if (!checkMatrixContent) return null;
-  if (!checkMatrixSize) return null;
+  // Sanity check
+  if (!checkMatrixContent(matrix)) return null;
+  if (!checkMatrixSize(matrix)) return null;
 
+  // The iteration will be from beginning to end, so the rows need to be inverted
   const inverted_matrix = invertRows(matrix);
   // Do the operations for each row
   for (const row of <TMatrix>inverted_matrix) {
     // Displaces the non-null content of the row to the left
     if (!isRowEmpty(row)) {
-      while (row[0] === null) {
+      // The double loop is needed in case there are two null togethers,
+      // otherwise the splice would jump one of them
+      for (let _ = 0; _ < row.length; _++) {
         for (let index = 0; index < row.length; index++) {
           if (row[index] === null) {
             row.splice(index, 1);
@@ -156,4 +164,53 @@ export const moveRight = (matrix: TMatrix): TMatrix | null => {
   // Inverts back the matrix to the original position and returns it
 
   return invertRows(<TMatrix>inverted_matrix);
+};
+
+/**
+ *
+ * @param matrix The board game
+ * @returns the matrix with all the content moved down. Addition is also performed.
+ */
+export const moveDown = (matrix: TMatrix): TMatrix | null => {
+  // Sanity check
+  if (!checkMatrixContent(matrix)) return null;
+  if (!checkMatrixSize(matrix)) return null;
+
+  const transponded_matrix = switchRowsColumns(matrix);
+
+  const moved_matrix = moveRight(<TMatrix>transponded_matrix);
+
+  return switchRowsColumns(<TMatrix>moved_matrix);
+};
+
+/**
+ *
+ * @param matrix The board game
+ * @returns the matrix with all the content moved to the left. Addition is also performed.
+ */
+export const moveLeft = (matrix: TMatrix): TMatrix | null => {
+  // Sanity check
+  if (!checkMatrixContent(matrix)) return null;
+  if (!checkMatrixSize(matrix)) return null;
+
+  // Move to left is the same as inverted move to right
+  const inverted_matrix = invertRows(matrix);
+
+  return invertRows(<TMatrix>moveRight(<TMatrix>inverted_matrix));
+};
+
+/**
+ *
+ * @param matrix The board game
+ * @returns the matrix with all the content moved up. Addition is also performed.
+ */
+export const moveUp = (matrix: TMatrix): TMatrix | null => {
+  // Sanity check
+  if (!checkMatrixContent(matrix)) return null;
+  if (!checkMatrixSize(matrix)) return null;
+
+  const transponded_matrix = <TMatrix>switchRowsColumns(matrix);
+  const moved_matrix = <TMatrix>moveLeft(transponded_matrix);
+
+  return switchRowsColumns(moved_matrix);
 };
