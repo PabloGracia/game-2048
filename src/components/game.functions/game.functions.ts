@@ -1,4 +1,6 @@
-type TMatrix = Array<Array<number | null>>;
+import { RowBoard } from "../row-board/row-board.component";
+
+export type TMatrix = Array<Array<number | null>>;
 
 /**
  * Function to check whether the matrix is full of numbers or has some gap available. The function
@@ -125,6 +127,17 @@ export const isRowEmpty = (row: Array<number | null>): boolean => {
 
 /**
  *
+ * @param row row of a matrix to be checked
+ */
+export const isRowFull = (row: Array<number | null>): boolean => {
+  for (const element of row) {
+    if (element === null) return false;
+  }
+  return true;
+};
+
+/**
+ *
  * @param matrix The board game
  * @returns the matrix with all the content moved to the right. Addition is also performed.
  */
@@ -213,4 +226,27 @@ export const moveUp = (matrix: TMatrix): TMatrix | null => {
   const moved_matrix = <TMatrix>moveLeft(transponded_matrix);
 
   return switchRowsColumns(moved_matrix);
+};
+
+export const addRandomNumber = (matrix: TMatrix): TMatrix | null => {
+  // Sanity check
+  if (!checkMatrixContent(matrix)) return null;
+  if (!checkMatrixSize(matrix)) return null;
+
+  let row, column;
+  while (true) {
+    row = Math.floor(Math.random() * matrix.length);
+    column = Math.floor(Math.random() * matrix.length);
+
+    if (matrix[row][column] === null) break;
+  }
+  const number = (Math.floor(Math.random() * 2) + 1) * 2;
+
+  const new_matrix: TMatrix = [];
+  for (const row of matrix) {
+    new_matrix.push(Array.from(row));
+  }
+  new_matrix[row][column] = number;
+
+  return new_matrix;
 };
