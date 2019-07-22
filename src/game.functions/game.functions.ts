@@ -6,10 +6,7 @@ export type TMatrix = Array<Array<number | null>>;
  * @param matrix the game board defined as a matrix. Subentries in this matrix are ROWS
  * @returns boolean if the matrix is correct; null if the matrix has wrong size or content
  */
-export const isFull = (matrix: TMatrix): boolean | null => {
-  if (!checkMatrixContent(matrix)) return null;
-  if (!checkMatrixSize(matrix)) return null;
-
+export const isFull = (matrix: TMatrix): boolean => {
   for (const row of matrix) {
     for (const element of row) {
       if (element === null) return false;
@@ -40,46 +37,13 @@ export const generateMatrix = (
 };
 
 /**
- * @abstract Function to check if the matrix is squared (no content in rows missing, or rows missing)
- * @param matrix The matrix (board game) to be checked
- * @returns boolean
- */
-export const checkMatrixSize = (matrix: TMatrix): boolean => {
-  for (const row of matrix) {
-    if (row.length !== matrix.length) {
-      return false;
-    }
-  }
-  return true;
-};
-
-/**
- * @abstract Function to check that the board game only contains either numbers or nulls
- * @param matrix The matrix (board game) to be checked
- * @returns boolean
- */
-export const checkMatrixContent = (matrix: TMatrix): boolean => {
-  for (const row of matrix) {
-    for (const element of row) {
-      if (typeof element !== "number" && element !== null) {
-        return false;
-      }
-    }
-  }
-  return true;
-};
-
-/**
  * @abstract Function to reverse a matrix's rows. Includes a sanity check for the size and content of the matrix.
  * This is a pure function, so a hard copy of the input matrix is done as not to change it, since
  * Array.prototype.reverse is an in-place method
  * @param matrix The matrix (board game) to reverse its rows
  * @returns matrix if the original matrix is correct; null otherwise
  */
-export const invertRows = (matrix: TMatrix): TMatrix | null => {
-  if (!checkMatrixContent(matrix)) return null;
-  if (!checkMatrixSize(matrix)) return null;
-
+export const invertRows = (matrix: TMatrix): TMatrix => {
   const hard_copy_matrix: TMatrix = [];
 
   for (const row of matrix) {
@@ -98,10 +62,7 @@ export const invertRows = (matrix: TMatrix): TMatrix | null => {
  * @param matrix The matrix to be transponded
  * @returns The transponded matrix if the original one is correct; null otherwise
  */
-export const switchRowsColumns = (matrix: TMatrix): TMatrix | null => {
-  if (!checkMatrixContent(matrix)) return null;
-  if (!checkMatrixSize(matrix)) return null;
-
+export const switchRowsColumns = (matrix: TMatrix): TMatrix => {
   const transponded_matrix: TMatrix = [];
   for (let index = 0; index < matrix[0].length; index++) {
     transponded_matrix.push([]);
@@ -139,15 +100,11 @@ export const isRowFull = (row: Array<number | null>): boolean => {
  * @param matrix The board game
  * @returns the matrix with all the content moved to the right. Addition is also performed.
  */
-export const moveRight = (matrix: TMatrix): TMatrix | null => {
-  // Sanity check
-  if (!checkMatrixContent(matrix)) return null;
-  if (!checkMatrixSize(matrix)) return null;
-
+export const moveRight = (matrix: TMatrix): TMatrix => {
   // The iteration will be from beginning to end, so the rows need to be inverted
   const inverted_matrix = invertRows(matrix);
   // Do the operations for each row
-  for (const row of <TMatrix>inverted_matrix) {
+  for (const row of inverted_matrix) {
     // Displaces the non-null content of the row to the left
     if (!isRowEmpty(row)) {
       // The double loop is needed in case there are two null togethers,
@@ -165,7 +122,7 @@ export const moveRight = (matrix: TMatrix): TMatrix | null => {
     for (let index = 0; index < row.length - 1; index++) {
       if (row[index] !== null) {
         if (row[index] === row[index + 1]) {
-          row[index] = <number>row[index] * 2;
+          row[index] = (row[index] as number) * 2;
           row.splice(index + 1, 1);
           row.push(null);
         }
@@ -174,7 +131,7 @@ export const moveRight = (matrix: TMatrix): TMatrix | null => {
   }
   // Inverts back the matrix to the original position and returns it
 
-  return invertRows(<TMatrix>inverted_matrix);
+  return invertRows(inverted_matrix);
 };
 
 /**
@@ -182,16 +139,12 @@ export const moveRight = (matrix: TMatrix): TMatrix | null => {
  * @param matrix The board game
  * @returns the matrix with all the content moved down. Addition is also performed.
  */
-export const moveDown = (matrix: TMatrix): TMatrix | null => {
-  // Sanity check
-  if (!checkMatrixContent(matrix)) return null;
-  if (!checkMatrixSize(matrix)) return null;
-
+export const moveDown = (matrix: TMatrix): TMatrix => {
   const transponded_matrix = switchRowsColumns(matrix);
 
-  const moved_matrix = moveRight(<TMatrix>transponded_matrix);
+  const moved_matrix = moveRight(transponded_matrix);
 
-  return switchRowsColumns(<TMatrix>moved_matrix);
+  return switchRowsColumns(moved_matrix);
 };
 
 /**
@@ -199,15 +152,11 @@ export const moveDown = (matrix: TMatrix): TMatrix | null => {
  * @param matrix The board game
  * @returns the matrix with all the content moved to the left. Addition is also performed.
  */
-export const moveLeft = (matrix: TMatrix): TMatrix | null => {
-  // Sanity check
-  if (!checkMatrixContent(matrix)) return null;
-  if (!checkMatrixSize(matrix)) return null;
-
+export const moveLeft = (matrix: TMatrix): TMatrix => {
   // Move to left is the same as inverted move to right
   const inverted_matrix = invertRows(matrix);
 
-  return invertRows(<TMatrix>moveRight(<TMatrix>inverted_matrix));
+  return invertRows(moveRight(inverted_matrix));
 };
 
 /**
@@ -215,13 +164,9 @@ export const moveLeft = (matrix: TMatrix): TMatrix | null => {
  * @param matrix The board game
  * @returns the matrix with all the content moved up. Addition is also performed.
  */
-export const moveUp = (matrix: TMatrix): TMatrix | null => {
-  // Sanity check
-  if (!checkMatrixContent(matrix)) return null;
-  if (!checkMatrixSize(matrix)) return null;
-
-  const transponded_matrix = <TMatrix>switchRowsColumns(matrix);
-  const moved_matrix = <TMatrix>moveLeft(transponded_matrix);
+export const moveUp = (matrix: TMatrix): TMatrix => {
+  const transponded_matrix = switchRowsColumns(matrix);
+  const moved_matrix = moveLeft(transponded_matrix);
 
   return switchRowsColumns(moved_matrix);
 };
@@ -231,11 +176,7 @@ export const moveUp = (matrix: TMatrix): TMatrix | null => {
  * @param matrix The matrix to add the number to
  * @returns the matrix provided with the added number
  */
-export const addRandomNumber = (matrix: TMatrix): TMatrix | null => {
-  // Sanity check
-  if (!checkMatrixContent(matrix)) return null;
-  if (!checkMatrixSize(matrix)) return null;
-
+export const addRandomNumber = (matrix: TMatrix): TMatrix => {
   let row, column;
   while (true) {
     row = Math.floor(Math.random() * matrix.length);
@@ -255,20 +196,23 @@ export const addRandomNumber = (matrix: TMatrix): TMatrix | null => {
 };
 
 /**
- * 
+ *
  * @param matrix1 first matrix to compare
  * @param matrix2 second matrix to compare
  */
-export const areMatricesIdentical = (matrix1: TMatrix, matrix2: TMatrix): boolean => {
+export const areMatricesIdentical = (
+  matrix1: TMatrix,
+  matrix2: TMatrix
+): boolean => {
   for (let index = 0; index < matrix1.length; index++) {
-    for (let jndex = 0; jndex < matrix1[0].length; jndex++){
+    for (let jndex = 0; jndex < matrix1[0].length; jndex++) {
       if (matrix1[index][jndex] !== matrix2[index][jndex]) {
-        return false
+        return false;
       }
-    }    
+    }
   }
   return true;
-}
+};
 
 /**
  * Function to calculate the points in the board
@@ -282,28 +226,28 @@ export const calculatePoints = (matrix: TMatrix): number => {
       sum = element ? sum + element : sum;
     }
   }
-  return sum
-}
+  return sum;
+};
 
 /**
- * 
+ *
  * @param matrix board game
  * @returns boolean stating if the game is over or not
  */
 export const isGameOver = (matrix: TMatrix): boolean => {
   if (!isFull(matrix)) return false;
-  
+
   /**
    * Function that checks if moving along a row is possible (two equal numbers together)
    * @param row row of a board game to analyze
    * @returns boolean: true if movement is possible, false if not
    */
-  const moveRowsPossible = (row:number[]): boolean => {
-    for (let index = 0; index < row.length -1; index++) {
+  const moveRowsPossible = (row: number[]): boolean => {
+    for (let index = 0; index < row.length - 1; index++) {
       if (row[index] === row[index + 1]) return true;
     }
     return false;
-  }
+  };
 
   for (const row of matrix) {
     if (moveRowsPossible(row as number[])) return false;
@@ -316,6 +260,4 @@ export const isGameOver = (matrix: TMatrix): boolean => {
   }
 
   return true;
-}
-
-
+};

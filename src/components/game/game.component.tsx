@@ -11,8 +11,7 @@ import {
   TMatrix,
   areMatricesIdentical,
   calculatePoints,
-  isGameOver,
-  isFull
+  isGameOver
 } from "../../game.functions/game.functions";
 
 import "./game.styles.scss";
@@ -87,8 +86,8 @@ export class Game extends React.Component<IProps, IState> {
     if (!areMatricesIdentical(this.state.values, matrix_moved as TMatrix)) {
       this.setState(
         {
-          values: matrix_complete as TMatrix,
-          score: calculatePoints(matrix_complete as TMatrix)
+          values: matrix_complete,
+          score: calculatePoints(matrix_complete)
         },
         () => {
           if (this.state.score > this.state.high_score) {
@@ -124,8 +123,7 @@ export class Game extends React.Component<IProps, IState> {
         ],
         isGameOver: false
       },
-      () =>
-        this.setState({ values: addRandomNumber(this.state.values) as TMatrix })
+      () => this.setState({ values: addRandomNumber(this.state.values) })
     );
   };
 
@@ -142,7 +140,7 @@ export class Game extends React.Component<IProps, IState> {
       }
     });
     this.setState({
-      values: addRandomNumber(this.state.values) as TMatrix
+      values: addRandomNumber(this.state.values)
     });
   }
 
