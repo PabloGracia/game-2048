@@ -8,10 +8,12 @@ import {
   moveLeft,
   moveUp,
   addRandomNumber,
-  TMatrix,
   areMatricesIdentical,
   calculatePoints,
-  isGameOver
+  isGameOver,
+  canMatrixColumnsMove,
+  canMatrixRowsMove,
+  isFull
 } from "../../game.functions/game.functions";
 
 import "./game.styles.scss";
@@ -41,49 +43,53 @@ export class Game extends React.Component<IProps, IState> {
     };
   }
 
-  // keyRight = () => {
-  //   const matrix_moved = moveRight(this.state.values);
-  //   const matrix_complete = addRandomNumber(matrix_moved as TMatrix);
-
-  //   if (!areMatricesIdentical(this.state.values, matrix_moved as TMatrix)) {
-  //     this.setState(
-  //       {
-  //         values: matrix_complete as TMatrix,
-  //         score: calculatePoints(matrix_complete as TMatrix)
-  //       },
-  //       () => {
-  //         if (this.state.score > this.state.high_score) {
-  //           this.setState({
-  //             high_score: this.state.score
-  //           });
-  //         }
-  //       }
-  //     );
-  //   }
-  // };
-
   keyPressed = (key: "right" | "down" | "left" | "up") => {
-    let matrix_moved;
+    const board = this.state.values;
+    let matrix_moved, matrix_complete;
     switch (key) {
       case "right":
-        matrix_moved = moveRight(this.state.values);
-        console.log("moving right");
+        if (canMatrixRowsMove(board)) {
+          matrix_moved = moveRight(board);
+          console.log("moving right");
+        } else {
+          matrix_moved = board;
+        }
         break;
       case "down":
-        matrix_moved = moveDown(this.state.values);
-        console.log("moving down");
+        if (canMatrixColumnsMove(board)) {
+          matrix_moved = moveDown(board);
+          console.log("moving down");
+        } else {
+          matrix_moved = board;
+        }
         break;
       case "left":
-        matrix_moved = moveLeft(this.state.values);
-        console.log("moving left");
+        if (canMatrixRowsMove(board)) {
+          matrix_moved = moveLeft(board);
+          console.log("moving left");
+        } else {
+          matrix_moved = board;
+        }
         break;
       case "up":
-        matrix_moved = moveUp(this.state.values);
-        console.log("moving up");
+        if (canMatrixColumnsMove(board)) {
+          matrix_moved = moveUp(board);
+          console.log("moving up");
+        } else {
+          matrix_moved = board;
+        }
+        break;
+      default:
+        matrix_moved = this.state.values;
         break;
     }
-    const matrix_complete = addRandomNumber(matrix_moved as TMatrix);
-    if (!areMatricesIdentical(this.state.values, matrix_moved as TMatrix)) {
+    if (!isFull(board)) {
+      matrix_complete = addRandomNumber(matrix_moved);
+    } else {
+      matrix_complete = matrix_moved;
+    }
+    if (!areMatricesIdentical(this.state.values, matrix_moved)) {
+      console.log("Matrices are not identical");
       this.setState(
         {
           values: matrix_complete,

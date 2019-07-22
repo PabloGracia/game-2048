@@ -177,20 +177,28 @@ export const moveUp = (matrix: TMatrix): TMatrix => {
  * @returns the matrix provided with the added number
  */
 export const addRandomNumber = (matrix: TMatrix): TMatrix => {
-  let row, column;
-  while (true) {
-    row = Math.floor(Math.random() * matrix.length);
-    column = Math.floor(Math.random() * matrix.length);
-
-    if (matrix[row][column] === null) break;
+  const empty_locations: Array<Array<number>> = [];
+  for (let index = 0; index < matrix.length; index++) {
+    for (let jndex = 0; jndex < matrix[0].length; jndex++) {
+      if (matrix[index][jndex] === null) {
+        empty_locations.push([index, jndex]);
+      }
+    }
   }
-  const number = (Math.floor(Math.random() * 2) + 1) * 2;
 
   const new_matrix: TMatrix = [];
   for (const row of matrix) {
     new_matrix.push(Array.from(row));
   }
-  new_matrix[row][column] = number;
+
+  if (empty_locations.length > 0) {
+    const number = (Math.floor(Math.random() * 2) + 1) * 2;
+    const [coor_x, coor_y] = empty_locations[
+      Math.floor(Math.random() * empty_locations.length)
+    ];
+
+    new_matrix[coor_x][coor_y] = number;
+  }
 
   return new_matrix;
 };
@@ -235,29 +243,35 @@ export const calculatePoints = (matrix: TMatrix): number => {
  * @returns boolean stating if the game is over or not
  */
 export const isGameOver = (matrix: TMatrix): boolean => {
-  if (!isFull(matrix)) return false;
-
-  /**
-   * Function that checks if moving along a row is possible (two equal numbers together)
-   * @param row row of a board game to analyze
-   * @returns boolean: true if movement is possible, false if not
-   */
-  const moveRowsPossible = (row: number[]): boolean => {
-    for (let index = 0; index < row.length - 1; index++) {
-      if (row[index] === row[index + 1]) return true;
-    }
-    return false;
-  };
-
-  for (const row of matrix) {
-    if (moveRowsPossible(row as number[])) return false;
-  }
-
-  const inverted_matrix = switchRowsColumns(matrix);
-
-  for (const row of inverted_matrix as TMatrix) {
-    if (moveRowsPossible(row as number[])) return false;
-  }
+  if (canMatrixRowsMove(matrix)) return false;
+  if (canMatrixColumnsMove(matrix)) return false;
 
   return true;
+};
+
+/**
+ * Function that checks if moving along a row is possible (two equal numbers together or null in the row)
+ * @param row row of a board game to analyze
+ * @returns boolean: true if movement is possible, false if not
+ */
+export const canRowMove = (row: Array<number | null>): boolean => {
+  for (let index = 0; index < row.length - 1; index++) {
+    if (row[index] === null) return true;
+    if (row[index] === row[index + 1]) return true;
+  }
+  if (row[row.length - 1] === null) return true;
+  return false;
+};
+
+export const canMatrixRowsMove = (matrix: TMatrix): boolean => {
+  if (!isFull(matrix)) return true;
+  for (const row of matrix) {
+    if (canRowMove(row)) return true;
+  }
+  return false;
+};
+
+export const canMatrixColumnsMove = (matrix: TMatrix): boolean => {
+  const transponded_matrix = switchRowsColumns(matrix);
+  return canMatrixRowsMove(transponded_matrix);
 };
