@@ -10,7 +10,9 @@ import { moveRight } from "./game.functions";
 import { moveDown } from "./game.functions";
 import { moveLeft } from "./game.functions";
 import { moveUp } from "./game.functions";
-
+import { areMatricesIdentical } from "./game.functions";
+import { calculatePoints } from "./game.functions";
+import { isGameOver } from "./game.functions";
 /*
 test("function_name", () => {
     expect(function(args)).toBe(result);
@@ -199,3 +201,33 @@ test("move_up_1", () => {
     [null, null, null, null]
   ]);
 });
+
+test("are_matrices_identical_1", () => {
+  expect(
+    areMatricesIdentical(
+      [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+      [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+    )
+  ).toBe(true);
+});
+
+test("are_matrices_identical_2", () => {
+  expect(
+    areMatricesIdentical(
+      [[-1, 2, 3], [4, 5, 6], [7, 8, 9]],
+      [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+    )
+  ).toBe(false);
+});
+
+test("calculate_points", () => {
+  expect(calculatePoints([[null, null, 2, 4],[2,2,2,2],[null, null, null, null],[4,4,null, null]])).toBe(22);
+});
+
+test("is_game_over_1", () => {
+  expect(isGameOver([[2,4,2,4],[4,2,4,2],[2,4,2,4],[4,2,4,2]])).toBe(true);
+})
+
+test("is_game_over_2", () => {
+  expect(isGameOver([[2,4,2,4],[4,4,4,2],[2,4,2,4],[4,2,4,2]])).toBe(false);
+})

@@ -1,5 +1,3 @@
-import { RowBoard } from "../row-board/row-board.component";
-
 export type TMatrix = Array<Array<number | null>>;
 
 /**
@@ -228,6 +226,11 @@ export const moveUp = (matrix: TMatrix): TMatrix | null => {
   return switchRowsColumns(moved_matrix);
 };
 
+/**
+ * Function to add a random number (2 or 4) to a random free location in the board game
+ * @param matrix The matrix to add the number to
+ * @returns the matrix provided with the added number
+ */
 export const addRandomNumber = (matrix: TMatrix): TMatrix | null => {
   // Sanity check
   if (!checkMatrixContent(matrix)) return null;
@@ -250,3 +253,69 @@ export const addRandomNumber = (matrix: TMatrix): TMatrix | null => {
 
   return new_matrix;
 };
+
+/**
+ * 
+ * @param matrix1 first matrix to compare
+ * @param matrix2 second matrix to compare
+ */
+export const areMatricesIdentical = (matrix1: TMatrix, matrix2: TMatrix): boolean => {
+  for (let index = 0; index < matrix1.length; index++) {
+    for (let jndex = 0; jndex < matrix1[0].length; jndex++){
+      if (matrix1[index][jndex] !== matrix2[index][jndex]) {
+        return false
+      }
+    }    
+  }
+  return true;
+}
+
+/**
+ * Function to calculate the points in the board
+ * @param matrix board game
+ * @returns the sum of values within the board
+ */
+export const calculatePoints = (matrix: TMatrix): number => {
+  let sum = 0;
+  for (const row of matrix) {
+    for (const element of row) {
+      sum = element ? sum + element : sum;
+    }
+  }
+  return sum
+}
+
+/**
+ * 
+ * @param matrix board game
+ * @returns boolean stating if the game is over or not
+ */
+export const isGameOver = (matrix: TMatrix): boolean => {
+  if (!isFull(matrix)) return false;
+  
+  /**
+   * Function that checks if moving along a row is possible (two equal numbers together)
+   * @param row row of a board game to analyze
+   * @returns boolean: true if movement is possible, false if not
+   */
+  const moveRowsPossible = (row:number[]): boolean => {
+    for (let index = 0; index < row.length -1; index++) {
+      if (row[index] === row[index + 1]) return true;
+    }
+    return false;
+  }
+
+  for (const row of matrix) {
+    if (moveRowsPossible(row as number[])) return false;
+  }
+
+  const inverted_matrix = switchRowsColumns(matrix);
+
+  for (const row of inverted_matrix as TMatrix) {
+    if (moveRowsPossible(row as number[])) return false;
+  }
+
+  return true;
+}
+
+
